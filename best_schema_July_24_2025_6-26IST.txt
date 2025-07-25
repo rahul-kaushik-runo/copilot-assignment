@@ -1,0 +1,661 @@
+Collection: license
+This collection stores licensing information for companies/users within the system.
+
+_id: Unique identifier (ObjectId) for the license record.
+companyId: Reference to the company (ObjectId) this license belongs to.
+type: String indicating the type of license.
+expiryDate: Unix timestamp when the license expires.
+createdAt: Unix timestamp when the record was created.
+updatedAt: Unix timestamp when the record was last updated.
+user: Nested dictionary containing user details associated with the license.
+
+user._id: String identifier for the user.
+
+user.name: Full name of the user.
+
+user.designation: Nested dictionary for the user's job title.
+
+user.designation._id: ObjectId for the designation.
+
+user.designation.name: Name of the designation (e.g., "Manager").
+
+user.process: Array of dictionaries representing processes the user is part of.
+
+user.process._id: ObjectId for the process.
+
+user.process.name: Name of the process.
+
+user.process.type: Type of process (e.g., "sales").
+
+
+Collection: email-interaction
+This collection logs email communications between users and customers.
+
+_id: Unique identifier (ObjectId) for the email record.
+companyId: Reference to the company (ObjectId) involved.
+subject: Subject line of the email.
+body: Content of the email.
+status: Delivery/read status (e.g., "sent", "delivered").
+customer: Nested dictionary for customer details.
+
+customer._id: ObjectId of the customer.
+
+customer.name: Customer's name.
+
+customer.phoneNumber: Customer's phone number.
+
+customer.email: Customer's email address.
+sender: Nested dictionary for sender details.
+
+sender._id: String ID of the sender.
+
+sender.name: Sender's name.
+
+sender.email: Sender's email address.
+
+sender.processId: ObjectId of the associated process.
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+
+
+
+Collection: rechurn-log
+This collection tracks rechurn (reassignment) operations for customers.
+
+_id: Unique identifier (ObjectId) for the log entry.
+cId: Company ID (ObjectId).
+pId: Process ID (ObjectId).
+cusId: Customer ID (ObjectId).
+rSId: Rechurn status ID (ObjectId).
+rBy: ID of the user who initiated the rechurn.
+rTo: ID of the user the customer was rechurned to.
+isCP: Boolean indicating if the rechurn was to a common pool.
+cAt: Creation timestamp (Unix).
+uAt: Last update timestamp (Unix).
+
+
+
+Collection: report-history
+This collection stores historical data for generated reports.
+
+_id: Unique identifier (ObjectId) for the report.
+cId: Company ID (ObjectId).
+userId: ID of the user who generated the report.
+pId: Process ID (ObjectId).
+fromEpoch: Start time (Unix) for the report period.
+toEpoch: End time (Unix) for the report period.
+type: Type of report (e.g., "allocation", "call").
+ids: String of relevant IDs (format varies by report).
+query: Nested dictionary of query parameters.
+
+query.isCommonPool: Boolean for common pool filtering.
+
+query.isPending: Boolean for pending status filtering.
+
+query.isUnique: Boolean for unique record filtering.
+
+query.timeZoneOffset: Timezone offset in minutes.
+status: Report generation status (e.g., "completed").
+updatedAt: Last update timestamp (Unix).
+createdAt: Creation timestamp (Unix).
+reportPath: File path/URL to the generated report.
+
+
+
+Collection: company
+This collection stores comprehensive company profiles, including integrations and billing.
+
+_id: Unique identifier (ObjectId) for the company.
+address: Nested dictionary for physical address.
+
+address.street: Street address.
+
+address.city: City.
+
+address.state: State/Province.
+
+address.country: Country.
+
+address.pincode: Postal code (integer).
+billing: Nested dictionary for billing details.
+
+billing.plan: Subscription plan details.
+
+billing.plan.type: Plan type (e.g., "premium").
+
+billing.plan.discount: Discount rates for billing cycles.
+
+quarterly: Discount percentage for quarterly billing.
+
+halfyearly: Discount percentage for half-yearly billing.
+
+yearly: Discount percentage for annual billing.
+
+billing.addOns: Placeholder for add-on services (currently null).
+createdAt: Unix timestamp of company creation.
+name: Company name.
+updatedAt: Unix timestamp of the last update.
+integrations: Nested dictionary for third-party integrations.
+
+integrations.leadSources: Configuration for lead sources.
+
+indiamart, shopify, magicbricks, etc.: Platform-specific settings.
+
+apiKey: Authentication key.
+
+processId: Associated process (ObjectId).
+
+leadAllocLogic: Rules for lead allocation.
+
+logicType: Allocation strategy (e.g., "round-robin").
+
+userIds: Array of user IDs eligible for leads.
+
+existCusLogic: Rules for handling existing customers.
+
+asgnToSmUser: Boolean to assign to the same user.
+
+existDatUpdOpt: Data update option (e.g., "overwrite").
+
+integrations.crmConfig: CRM system configurations (e.g., Zoho, Salesforce).
+
+integrations.triggers: Automation triggers for emails, calls, etc.
+
+integrations.s3: AWS S3 storage credentials.
+
+bucketName, accessKey, region, etc.
+
+integrations.compliance: Compliance settings (e.g., DNCR).
+iD, iFFF: Boolean flags (purpose unclear from schema).
+autoDialer: Settings for automated calling.
+
+mandatoryType: Rule type for dialer.
+
+userIds: Array of user IDs using the dialer.
+
+delayBetweenCallsInSec: Delay interval (integer).
+callTrack: Call tracking preferences.
+
+trackTeamCalls: Boolean to enable tracking.
+
+ignoreUnknownCalls: Boolean to filter unknown numbers.
+notifications: Notification settings.
+
+recurring, allocAsgn, userStatus: Sub-configurations.
+dncrOptIn: Boolean for Do Not Call Registry compliance.
+
+
+Collection: api-key
+This collection stores API keys for system or third-party integrations.
+
+_id: Unique identifier (ObjectId) for the API key record.
+companyId: Reference to the company (ObjectId) that owns the key.
+apiKey: The actual API key string (hashed or plaintext).
+expiresAt: Unix timestamp when the key expires.
+access: Permission level (e.g., "read-only", "admin").
+creator: Nested dictionary for the key creator’s details.
+
+creator._id: User ID (string) of the creator.
+
+creator.name: Creator’s full name.
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+
+
+Collection: call-interaction
+This collection logs call interactions between users and customers.
+
+_id: Unique identifier (ObjectId) for the call record.
+companyId: Reference to the company (ObjectId).
+details: Nested dictionary for call metadata.
+
+details.phoneNumber: The phone number dialed/received.
+
+details.startTime: Unix timestamp of call start.
+
+details.endTime: Unix timestamp of call end.
+
+details.type: Call direction (e.g., "inbound", "outbound").
+
+details.duration: Call duration in seconds.
+user: Nested dictionary for the user involved.
+
+user._id: User ID (string).
+
+user.name: User’s full name.
+
+user.process: Process associated with the call.
+
+user.process._id: Process ID (ObjectId).
+
+user.process.name: Process name.
+
+user.process.type: Process type (e.g., "sales").
+
+user.designation: User’s job title.
+
+user.designation._id: Designation ID (string).
+
+user.designation.name: Designation name.
+customer: Nested dictionary for customer details.
+
+customer._id: Customer ID (ObjectId).
+
+customer.name: Customer’s name.
+tag: Optional label for the call (e.g., "follow-up").
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+isFollowedUp: Boolean indicating if a follow-up was completed.
+
+
+Collection: customer-assign-log
+This collection tracks customer reassignments between users.
+
+_id: Unique identifier (ObjectId) for the log entry.
+cId: Company ID (ObjectId).
+pId: Process ID (ObjectId).
+cusId: Customer ID (ObjectId).
+asgn: Nested dictionary for assignment details.
+
+asgn.tId: ID (string) of the user assigned to.
+
+asgn.tN: Name of the user assigned to.
+
+asgn.fId: ID (string) of the user assigned from.
+
+asgn.fN: Name of the user assigned from.
+cAt: Creation timestamp (Unix).
+uAt: Last update timestamp (Unix).
+
+
+
+Collection: transaction
+This collection records financial transactions (e.g., license purchases).
+
+_id: Unique identifier (ObjectId) for the transaction.
+userId: User ID (string) who initiated the transaction.
+companyId: Company ID (ObjectId) linked to the transaction.
+status: Transaction status (e.g., "completed", "failed").
+type: Transaction type (e.g., "license_purchase").
+validityInDays: Days the transaction is valid (e.g., license duration).
+count: Quantity of items (e.g., licenses).
+value: Base monetary value (integer).
+gst: Tax amount (integer).
+amountPaid: Total paid after discounts/taxes (integer).
+discount: Discount applied (integer).
+currency: Currency code (e.g., "INR").
+licenseIds: Array of license IDs (ObjectId) included.
+transactionDate: Unix timestamp of the transaction.
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+
+
+
+Collection: roles
+This collection defines user roles and permissions.
+
+_id: Unique identifier (ObjectId) for the role.
+cId: Company ID (ObjectId).
+name: Role name (e.g., "Admin", "Agent").
+permissions: Nested dictionary for granular permissions.
+
+webAllocation: Boolean for web-based allocation access.
+
+processAdmin: Boolean for process management rights.
+
+maskCusPhone: Boolean to hide customer phone numbers.
+
+customer: Customer operation permissions.
+
+delete, edit, view: Booleans for respective actions.
+
+login: Login method permissions.
+
+userWeb: Boolean for web login access.
+
+callRecording: Call recording permissions.
+
+play, download: Booleans for respective actions.
+
+callTracking: Call tracking permissions.
+
+personalCalls, popup, isTrackAllSim, etc.: Booleans for features.
+
+reports: Report access permissions.
+
+normal: Standard reports (e.g., CRM, allocation).
+
+advanced: Disposition/login analytics.
+type: Role type (integer, purpose unclear).
+cAt: Creation timestamp (Unix).
+uAt: Last update timestamp (Unix).
+
+
+Collection: crm-interaction
+This collection logs CRM-related customer interactions.
+
+_id: Unique identifier (ObjectId) for the interaction.
+companyId: Company ID (ObjectId).
+customer: Nested dictionary for customer details.
+
+customer._id: Customer ID (ObjectId).
+
+customer.name: Customer’s name.
+
+customer.phoneNumber: Customer’s phone number.
+
+customer.email: Customer’s email (often null).
+
+customer.company: Company details.
+
+name, address, kdm: Key decision-maker info.
+dateTime: Unix timestamp of the interaction.
+priority: Priority level (integer).
+notes: Additional notes (often null).
+customFields: Array of custom field data.
+
+customFields._id: Field ID (string).
+
+customFields.dName: Display name.
+
+customFields.type: Data type (e.g., "dropdown").
+
+customFields.attributes: Field attributes (e.g., isRequired).
+
+customFields.value: Field value (integer/string).
+interactionStatus: Closure status.
+
+closedById, closedByName, closedOn: Closure metadata.
+assigned: Assignment details.
+
+fromId, toId, toName, processId: Assignment tracking.
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+location: Geo-coordinates (latitude/longitude).
+
+
+Collection: allocation
+This collection tracks customer allocations to users or processes within a company.
+
+_id: Unique identifier (ObjectId) for the allocation record.
+companyId: The company (ObjectId) associated with this allocation.
+customer: Nested dictionary containing customer details.
+
+customer._id: Customer ID (ObjectId).
+
+customer.name: Customer’s name.
+
+customer.phoneNumber: Customer’s contact number.
+
+customer.email: Customer’s email (if available).
+
+customer.company: Company details linked to the customer.
+
+name: Company name.
+
+address: Full address breakdown (street, city, state, country, pincode).
+
+kdm: Key Decision Maker details (name, phone number).
+priority: Priority level (integer) for the allocation.
+assigned: Assignment details (who assigned and to whom).
+
+toId: User ID (str) receiving the allocation.
+
+toName: Name of the assigned user.
+
+fromId: User ID (str) who assigned the customer.
+
+fromName: Name of the assigning user.
+
+processId: Process (ObjectId) linked to this allocation.
+customFields: Array of dynamic fields for additional data.
+
+_id: Field ID (str).
+
+dName: Display name of the field.
+
+type: Data type (str).
+
+attributes: Field properties (isFixed, isFilterable, isReadOnly).
+
+value: Field value (str).
+
+valueId: Reference ID for the value (if applicable).
+notes: Additional notes (str) about the allocation.
+source: Source (str) of the allocation (e.g., "manual", "API").
+isInteractionPending: Boolean flag for pending follow-ups.
+createdAt: Unix timestamp when the allocation was created.
+updatedAt: Unix timestamp of the last update.
+
+
+Collection: time-log
+This collection records user login/logout and activity durations.
+
+_id: Unique identifier (ObjectId) for the log entry.
+companyId: The company (ObjectId) associated with the log.
+user: Nested dictionary for user details.
+
+_id: User ID (str).
+
+name: User’s full name.
+
+process: Process details (_id, name).
+
+device: Device metadata (model, OS version, client type).
+status: Activity status (str), e.g., "online", "break".
+duration: Duration of the session (often null).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+
+
+Collection: user
+This collection stores user profiles, roles, and permissions.
+
+_id: Unique user ID (str).
+name: User’s full name.
+phoneNumber: User’s contact number.
+email: User’s email (often null).
+iStat: Invitation/activation status.
+
+id: Status ID (str).
+
+iBy: Invited by (str).
+
+iOn: Invitation timestamp (int).
+
+aOn: Activation timestamp (int).
+designation: Job title details (_id, name).
+role: User’s role and permissions.
+
+_id: Role ID (often null).
+
+name: Role name (str).
+
+ctmP: Granular permissions (mirrors roles collection).
+process: Array of processes (_id, name, type) the user belongs to.
+company: Company details (_id, name).
+reportsTo: Array of supervisors (_id, name).
+license: License details (_id, expiryDate).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+lastStatus: Last recorded activity status (status, since, client).
+tokens: OTP and authentication tokens.
+tut: Tutorial completion flags (make_call, create_user, etc.).
+deviceInfo: Device metadata (model, OS, FCM token, etc.).
+
+
+Collection: customer
+This is a minimal customer record storing core identifiers.
+
+_id: Unique customer ID (ObjectId).
+name: Customer’s name.
+pNum: Phone number (str).
+cId: Company ID (ObjectId).
+creator: Creator details (_id, name).
+cAt: Creation timestamp (int).
+uAt: Last update timestamp (int).
+
+
+
+Collection: whatsapp-interaction
+This collection logs WhatsApp communications.
+
+_id: Unique identifier (ObjectId).
+companyId: Company ID (ObjectId).
+message: Message content (str).
+status: Delivery status (str).
+customer: Customer details (_id, name, phoneNumber).
+label: Tag/label (str) for categorization.
+user: Sender details (_id, name, processId).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: process
+This defines business processes (e.g., "Sales", "Support").
+
+_id: Unique process ID (ObjectId).
+companyId: Company ID (ObjectId).
+name: Process name (str).
+type: Process type (str), e.g., "sales_funnel".
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: report-agent-login
+This collection stores agent login and call performance reports.
+
+_id: Unique report ID (ObjectId).
+companyId: Company ID (ObjectId).
+user: Agent details (_id, name, process).
+dateRange: Report period (startEpoch, endEpoch).
+calls: Call metrics (incoming/outgoing counts, talk time).
+loginDuration: Total logged-in time (int).
+idleTime, wrapupTime, breakTime: Activity breakdowns.
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: sms-interaction
+This collection logs SMS communications.
+
+_id: Unique identifier (ObjectId).
+companyId: Company ID (ObjectId).
+message: SMS content (str).
+status: Delivery status (str).
+customer: Customer details (_id, name, phoneNumber).
+label: Tag/label (str).
+user: Sender details (_id, name, processId).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: email-template
+This stores email templates for reuse.
+
+_id: Unique template ID (ObjectId).
+companyId: Company ID (ObjectId).
+processId: Process ID (often null).
+userId: Creator’s user ID (str).
+access: Permission level (str), e.g., "public".
+label: Template name (str).
+subject: Email subject line (str).
+body: Email content (str).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: whatsapp-template
+This stores WhatsApp message templates.
+
+_id: Unique template ID (ObjectId).
+processId: Process ID (often null).
+companyId: Company ID (ObjectId).
+userId: Creator’s user ID (str).
+access: Permission level (str).
+label: Template name (str).
+message: Template content (str).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: cloud-virtual-number
+This stores virtual phone numbers assigned to companies.
+
+_id: Unique ID (ObjectId).
+phoneNumber: Virtual number (str).
+companyId: Company ID (ObjectId).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: customer-details
+This extends the customer collection with additional metadata.
+
+_id: Unique ID (ObjectId).
+name: Customer name (str).
+pNum: Phone number (str).
+email: Email (str, often null).
+cusId: Customer ID (ObjectId, likely linked to customer._id).
+cId: Company ID (ObjectId).
+pId: Process ID (ObjectId).
+cmp: Company details (name, kdm).
+prt: Priority (int).
+dT: Date/time (int, often null).
+cFs: Custom fields (similar to allocation.customFields).
+status: Status metadata (id, v).
+asgn: Assignment details (fromId, toId, etc.).
+cAt: Creation timestamp (int).
+uAt: Last update timestamp (int).
+creator: Creator details (_id, name).
+rFol: Recurring follow-up settings (user, notes, schedule).
+Collection: report-agent-disposition
+This stores agent disposition (outcome) reports.
+
+_id: Unique report ID (ObjectId).
+companyId: Company ID (ObjectId).
+user: Agent details (_id, name, process).
+callType: Type of calls (str).
+callCounts: Metrics (personal, contacted, non-contacted calls).
+customFields: Disposition field breakdowns (_id, dName, count).
+dateRange: Report period (startEpoch, endEpoch).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: crm-field
+This defines custom CRM fields and their attributes.
+
+_id: Unique field ID (ObjectId).
+companyId: Company ID (ObjectId).
+processId: Process ID (ObjectId).
+nameMappings: Field name mappings (Array).
+defaultFieldAttributes: Default attributes (Array).
+stgMap: Stage mappings (e.g., "start", "inProgress").
+crmFields: Array of field definitions (dName, type, options).
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+Collection: rechurn-status
+This tracks rechurn (reassignment) batch operations.
+
+_id: Unique ID (ObjectId).
+companyId: Company ID (ObjectId).
+user: User who initiated rechurn (_id, name, processId).
+count: Rechurn metrics (total, done, failed).
+status: Completion status (int).
+isCommonPool: Boolean for common pool reassignments.
+startEpoch, endEpoch: Batch processing timeframe.
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+allocatedTo: Array of users (id, name) who received rechurned records.
+Collection: recurring-interaction
+This schedules recurring customer interactions.
+
+_id: Unique ID (ObjectId).
+companyId: Company ID (ObjectId).
+customer: Customer details (_id, name, phoneNumber, company).
+user: Assigned user (_id, name, process).
+type: Interaction type (str).
+notes: Additional notes (often null).
+followupAt: Next follow-up timestamp (int).
+createdAt: Unix timestamp of creation.
+
+
+
+Collection: sms-template
+This collection stores SMS message templates.
+
+_id: Unique identifier (ObjectId) for the template.
+processId: Associated process ID (often null).
+companyId: Company ID (ObjectId).
+userId: Creator’s user ID (string).
+access: Permission level (e.g., "public", "private").
+label: Template name/label.
+message: Template content.
+createdAt: Unix timestamp of creation.
+updatedAt: Unix timestamp of the last update.
+

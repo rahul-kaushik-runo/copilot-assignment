@@ -1,0 +1,19 @@
+In this code I want to do this: 
+
+1. Look at each collection description 
+2. Match which collection fits the best(1st API Call) 
+3. Give the schema of only that collection to the LLM 
+4. The LLM returns a query based on that schema(2nd API Call)
+5. The query is executed 
+6. Based on the results, the the LLM generates the result in a user friendly way(3rd API call) 
+
+
+
+
+
+The previous code has: 
+
+1. Looks at the entire schema 
+2. Decides which collection to execute the query on
+3. Executes the query on that collection
+ 

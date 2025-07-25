@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AI Copilot for MongoDB Queries </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .query-container {
+            margin-top: 30px;
+        }
+        .results-container {
+            margin-top: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .query-box {
+            margin-bottom: 15px;
+        }
+        .history-item {
+            cursor: pointer;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .history-item:hover {
+            background-color: #f8f9fa;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .tab-content {
+            padding-top: 20px;
+        }
+        .explanation-box {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #0d6efd;
+            margin-bottom: 20px;
+        }
+        .form-switch {
+            padding-left: 2.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-4">AI Copilot for MongoDB Queries</h1>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="query-tab" data-bs-toggle="tab" data-bs-target="#query-tab-pane" type="button" role="tab" aria-controls="query-tab-pane" aria-selected="true">Query</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-tab-pane" type="button" role="tab" aria-controls="history-tab-pane" aria-selected="false">History</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="schema-tab" data-bs-toggle="tab" data-bs-target="#schema-tab-pane" type="button" role="tab" aria-controls="schema-tab-pane" aria-selected="false">Schema</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="query-tab-pane" role="tabpanel" aria-labelledby="query-tab" tabindex="0">
+                <div class="query-container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Enter your query in natural language</h5>
+                                    <div class="query-box">
+                                        <textarea id="query-input" class="form-control" rows="3" placeholder="e.g. Find the latest message sent to Vikram Das"></textarea>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="explanation-toggle">
+                                        <label class="form-check-label" for="explanation-toggle">Include natural language explanation</label>
+                                    </div>
+                                    <button id="submit-query" class="btn btn-primary">Submit Query</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="results-section" class="results-container mt-4" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Results</h5>
+                                    <div id="query-status" class="alert" role="alert"></div>
+                                    
+                                    <div id="explanation-section" class="explanation-box" style="display: none;">
+                                        <h6>Explanation:</h6>
+                                        <div id="query-explanation"></div>
+                                    </div>
+                                    
+                                    <div id="query-details">
+                                        <h6>Generated MongoDB Query:</h6>
+                                        <pre id="generated-query"></pre>
+                                        
+                                        <div id="results-info" class="mt-3">
+                                            <p><strong>Query Type:</strong> <span id="query-type"></span></p>
+                                            <p><strong>Execution Time:</strong> <span id="execution-time"></span> ms</p>
+                                            <p><strong>Results Count:</strong> <span id="results-count"></span></p>
+                                        </div>
+                                        
+                                        <h6 class="mt-3">Query Results:</h6>
+                                        <pre id="query-results"></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="history-tab-pane" role="tabpanel" aria-labelledby="history-tab" tabindex="0">
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Query History</h5>
+                                <div id="history-list" class="mt-3">
+                                    <p>No history yet. Run some queries first.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="schema-tab-pane" role="tabpanel" aria-labelledby="schema-tab" tabindex="0">
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Database Schema</h5>
+                                <div class="mt-3">
+                                    <h6>Sample Document:</h6>
+                                    <pre id="schema-sample"></pre>
+                                    
+                                    <h6 class="mt-3">Available Fields:</h6>
+                                    <div id="schema-fields"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load schema info
+            fetch('/api/schema')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('schema-sample').textContent = JSON.stringify(data.schema, null, 2);
+                        
+                        const fieldsList = document.getElementById('schema-fields');
+                        fieldsList.innerHTML = '';
+                        if (data.fields && data.fields.length > 0) {
+                            const ul = document.createElement('ul');
+                            data.fields.forEach(field => {
+                                const li = document.createElement('li');
+                                li.textContent = field;
+                                ul.appendChild(li);
+                            });
+                            fieldsList.appendChild(ul);
+                        } else {
+                            fieldsList.textContent = 'No fields available';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching schema:', error));
+            
+            // Load history
+            loadHistory();
+            
+            // Handle query submission
+            document.getElementById('submit-query').addEventListener('click', function() {
+                const query = document.getElementById('query-input').value.trim();
+                if (!query) return;
+                
+                const includeExplanation = document.getElementById('explanation-toggle').checked;
+                
+                // Show loading state
+                document.getElementById('results-section').style.display = 'block';
+                document.getElementById('query-status').className = 'alert alert-info';
+                document.getElementById('query-status').textContent = 'Processing query...';
+                document.getElementById('query-details').style.display = 'none';
+                document.getElementById('explanation-section').style.display = 'none';
+                
+                // Send query to server
+                fetch('/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        query: query,
+                        include_explanation: includeExplanation
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('query-status').className = 'alert alert-success';
+                        document.getElementById('query-status').textContent = 'Query executed successfully!';
+                        document.getElementById('query-details').style.display = 'block';
+                        
+                        // Show explanation if available
+                        if (data.explanation) {
+                            document.getElementById('explanation-section').style.display = 'block';
+                            document.getElementById('query-explanation').innerHTML = data.explanation
+                                .replace(/\n/g, '<br>')
+                                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');  // Basic markdown for bold text
+                        } else {
+                            document.getElementById('explanation-section').style.display = 'none';
+                        }
+                        
+                        document.getElementById('generated-query').textContent = JSON.stringify(data.generated_query, null, 2);
+                        document.getElementById('query-type').textContent = data.query_type;
+                        document.getElementById('execution-time').textContent = data.execution_time_ms;
+                        document.getElementById('results-count').textContent = data.count;
+                        
+                        // Show first 10 results at most
+                        const resultsToShow = data.results.slice(0, 10);
+                        document.getElementById('query-results').textContent = JSON.stringify(resultsToShow, null, 2);
+                        
+                        // Reload history
+                        loadHistory();
+                    } else {
+                        document.getElementById('query-status').className = 'alert alert-danger';
+                        document.getElementById('query-status').textContent = 'Error: ' + data.message;
+                        document.getElementById('query-details').style.display = 'none';
+                        document.getElementById('explanation-section').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('query-status').className = 'alert alert-danger';
+                    document.getElementById('query-status').textContent = 'Error: Failed to process query. See console for details.';
+                    document.getElementById('query-details').style.display = 'none';
+                    document.getElementById('explanation-section').style.display = 'none';
+                });
+            });
+            
+            // Handle Enter key in textarea
+            document.getElementById('query-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    document.getElementById('submit-query').click();
+                }
+            });
+        });
+        
+        function loadHistory() {
+            fetch('/api/history')
+                .then(response => response.json())
+                .then(data => {
+                    const historyList = document.getElementById('history-list');
+                    historyList.innerHTML = '';
+                    
+                    if (data.history && data.history.length > 0) {
+                        data.history.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'history-item';
+                            div.innerHTML = `
+                                <div><strong>${item.query}</strong></div>
+                                <div><small>${JSON.stringify(item.mongodb_query)}</small></div>
+                            `;
+                            div.addEventListener('click', function() {
+                                document.getElementById('query-input').value = item.query;
+                                document.getElementById('query-tab').click();
+                            });
+                            historyList.appendChild(div);
+                        });
+                    } else {
+                        historyList.textContent = 'No history yet. Run some queries first.';
+                    }
+                })
+                .catch(error => console.error('Error fetching history:', error));
+        }
+    </script>
+</body>
+</html>
