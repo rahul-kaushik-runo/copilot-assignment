@@ -1,6 +1,7 @@
 import json
 import google.generativeai as genai
 from pymongo import MongoClient
+import datetime
 import time
 from difflib import get_close_matches
 
@@ -39,6 +40,22 @@ class NLToMongoDBQuerySystem:
                 "KA": ["karnataka", "ka"]
             }
         }
+        
+        
+    def _convert_epoch_to_datetime(self, data):
+    
+        if isinstance(data, dict):
+            return {k: self._convert_epoch_to_datetime(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._convert_epoch_to_datetime(v) for v in data]
+        elif isinstance(data, (int, float)) and data > 1e9 and data < 2e10:
+            # Check if this looks like an epoch timestamp (between 2001 and 2033)
+            try:
+                return datetime.datetime.fromtimestamp(data).strftime('%Y-%m-%d %H:%M:%S')
+            except:
+                return data
+        else:
+            return data
 
     def _create_schema_summaries(self):
         """Create concise one-line summaries of each collection"""
@@ -334,7 +351,7 @@ EXAMPLE OUTPUTS:
         return "find"
     
     def execute_query(self, collection_name, query):
-        """Execute the generated MongoDB query"""
+   
         try:
             collection = self.db[collection_name]
             operation_type = self._get_operation_type(query)
@@ -342,7 +359,6 @@ EXAMPLE OUTPUTS:
             
             if operation_type == "aggregate":
                 pipeline = query if isinstance(query, list) else query.get("aggregate", [])
-                # Process each $match stage for case-insensitive matching
                 processed_pipeline = []
                 for stage in pipeline:
                     if "$match" in stage:
@@ -357,8 +373,11 @@ EXAMPLE OUTPUTS:
             else:
                 return {"error": f"Unsupported operation type: {operation_type}"}
             
+            # Convert epoch timestamps to datetime strings
+            converted_results = self._convert_epoch_to_datetime(results)
+            
             return {
-                "results": json.loads(json.dumps(results, default=str)),
+                "results": json.loads(json.dumps(converted_results, default=str)),
                 "count": len(results),
                 "query_type": operation_type
             }
@@ -366,15 +385,12 @@ EXAMPLE OUTPUTS:
             return {"error": str(e)}
 
     def execute_multi_collection_query(self, query_result):
-        """Execute multi-collection queries and combine results"""
         multi_data = query_result.get("multi_collection_data", {})
         if not multi_data.get("is_multi_collection", False):
-            # Not a multi-collection query, execute normally
             collection_name = query_result["collection"]
             mongo_query = query_result["query"]
             return self.execute_query(collection_name, mongo_query)
         
-        # Execute queries for all collections
         all_collections = multi_data["all_collections"]
         all_queries = multi_data["all_queries"]
         
@@ -388,7 +404,6 @@ EXAMPLE OUTPUTS:
                 result = self.execute_query(collection_name, query)
                 
                 if "error" not in result:
-                    # Add collection identifier to each result
                     collection_results = result["results"]
                     for item in collection_results:
                         item["_source_collection"] = collection_name
@@ -402,8 +417,11 @@ EXAMPLE OUTPUTS:
                 else:
                     execution_details[collection_name] = {"error": result["error"]}
         
+        # Convert epoch timestamps in the combined results
+        converted_results = self._convert_epoch_to_datetime(combined_results)
+        
         return {
-            "results": combined_results,
+            "results": converted_results,
             "count": total_count,
             "query_type": "multi_collection",
             "execution_details": execution_details,
@@ -450,6 +468,7 @@ INSTRUCTIONS:
 9. Don't talk about the query used or how it was generated, focus on the results and their meaning
 10. Say the question the user asked in the beginning, in your own words, to show you understood it
 {f"11. This query involved multiple data sources, explain how the data was combined" if is_multi_collection else ""}
+12. If the time is returned as unix time, convert it to a human-readable format using the formula 
 
 # USER ORIGINAL QUESTION: "{nl_query}"
 
