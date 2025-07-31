@@ -222,7 +222,7 @@ user: Nested dictionary for the user involved.
 
 user._id: User ID (string).
 
-user.name: User’s full name.
+user.name: caller's full name.
 
 user.process: Process associated with the call.
 
@@ -442,7 +442,7 @@ name: User’s full name.
 process: Process details (_id, name).
 
 device: Device metadata (model, OS version, client type).
-status: Activity status (str), e.g., "online", "break".
+status: Activity status (str), e.g., "login", "logout".
 duration: Duration of the session (often null).
 createdAt: Unix timestamp of creation.
 updatedAt: Unix timestamp of the last update.

@@ -1822,3 +1822,915 @@ Schema (dot notation):
 }
 
 =============================================================
+Collection: license
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "type": "str",
+  "expiryDate": "int",
+  "createdAt": "int",
+  "updatedAt": "int",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.designation": "dict",
+  "user.designation._id": "ObjectId",
+  "user.designation.name": "str",
+  "user.process": "Array[dict]",
+  "user.process._id": "ObjectId",
+  "user.process.name": "str",
+  "user.process.type": "str"
+}
+
+=============================================================
+Collection: email-interaction
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "subject": "str",
+  "body": "str",
+  "status": "str",
+  "customer": "dict",
+  "customer._id": "ObjectId",
+  "customer.name": "str",
+  "customer.phoneNumber": "str",
+  "customer.email": "str",
+  "sender": "dict",
+  "sender._id": "str",
+  "sender.name": "str",
+  "sender.email": "str",
+  "sender.processId": "ObjectId",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: rechurn-log
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "cId": "ObjectId",
+  "pId": "ObjectId",
+  "cusId": "ObjectId",
+  "rSId": "ObjectId",
+  "rBy": "str",
+  "rTo": "str",
+  "isCP": "bool",
+  "cAt": "int",
+  "uAt": "int"
+}
+
+=============================================================
+Collection: report-history
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "cId": "ObjectId",
+  "userId": "str",
+  "pId": "ObjectId",
+  "fromEpoch": "int",
+  "toEpoch": "int",
+  "type": "str",
+  "ids": "str",
+  "query": "dict",
+  "query.isCommonPool": "bool",
+  "query.isPending": "bool",
+  "query.isUnique": "bool",
+  "query.timeZoneOffset": "int",
+  "status": "str",
+  "updatedAt": "int",
+  "createdAt": "int",
+  "reportPath": "str"
+}
+
+=============================================================
+Collection: company
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "address": "dict",
+  "address.street": "str",
+  "address.city": "str",
+  "address.state": "str",
+  "address.country": "str",
+  "address.pincode": "int",
+  "billing": "dict",
+  "billing.plan": "dict",
+  "billing.plan.type": "str",
+  "billing.plan.discount": "dict",
+  "billing.plan.discount.quarterly": "int",
+  "billing.plan.discount.halfyearly": "int",
+  "billing.plan.discount.yearly": "int",
+  "billing.addOns": "NoneType",
+  "createdAt": "int",
+  "name": "str",
+  "updatedAt": "int",
+  "integrations": "dict",
+  "integrations.leadSources": "dict",
+  "integrations.leadSources.indiamart": "dict",
+  "integrations.leadSources.indiamart.apiKey": "str",
+  "integrations.leadSources.indiamart.mobileNumber": "str",
+  "integrations.leadSources.indiamart.processId": "ObjectId",
+  "integrations.leadSources.indiamart.leadAllocLogic": "dict",
+  "integrations.leadSources.indiamart.leadAllocLogic.logicType": "str",
+  "integrations.leadSources.indiamart.leadAllocLogic.userIds": "Array[str]",
+  "integrations.leadSources.indiamart.existCusLogic": "dict",
+  "integrations.leadSources.indiamart.existCusLogic.asgnToSmUser": "bool",
+  "integrations.leadSources.indiamart.existCusLogic.existDatUpdOpt": "str",
+  "integrations.leadSources.shopify": "dict",
+  "integrations.leadSources.shopify.processId": "ObjectId",
+  "integrations.leadSources.shopify.leadAllocLogic": "dict",
+  "integrations.leadSources.shopify.leadAllocLogic.logicType": "str",
+  "integrations.leadSources.shopify.leadAllocLogic.userIds": "Array[str]",
+  "integrations.leadSources.shopify.existCusLogic": "dict",
+  "integrations.leadSources.shopify.existCusLogic.asgnToSmUser": "bool",
+  "integrations.leadSources.shopify.existCusLogic.existDatUpdOpt": "str",
+  "integrations.leadSources.magicbricks": "dict",
+  "integrations.leadSources.magicbricks.processId": "ObjectId",
+  "integrations.leadSources.magicbricks.leadAllocLogic": "dict",
+  "integrations.leadSources.magicbricks.leadAllocLogic.logicType": "str",
+  "integrations.leadSources.magicbricks.leadAllocLogic.userIds": "Array[str]",
+  "integrations.leadSources.magicbricks.existCusLogic": "dict",
+  "integrations.leadSources.magicbricks.existCusLogic.asgnToSmUser": "bool",
+  "integrations.leadSources.magicbricks.existCusLogic.existDatUpdOpt": "str",
+  "integrations.leadSources.justdial": "dict",
+  "integrations.leadSources.justdial.processId": "ObjectId",
+  "integrations.leadSources.justdial.leadAllocLogic": "dict",
+  "integrations.leadSources.justdial.leadAllocLogic.logicType": "str",
+  "integrations.leadSources.justdial.leadAllocLogic.userIds": "Array[str]",
+  "integrations.leadSources.justdial.existCusLogic": "dict",
+  "integrations.leadSources.justdial.existCusLogic.asgnToSmUser": "bool",
+  "integrations.leadSources.justdial.existCusLogic.existDatUpdOpt": "str",
+  "integrations.leadSources.NNacres": "dict",
+  "integrations.leadSources.NNacres.processId": "ObjectId",
+  "integrations.leadSources.NNacres.leadAllocLogic": "dict",
+  "integrations.leadSources.NNacres.leadAllocLogic.logicType": "str",
+  "integrations.leadSources.NNacres.leadAllocLogic.userIds": "Array[str]",
+  "integrations.leadSources.NNacres.existingCustomerLogic": "dict",
+  "integrations.leadSources.NNacres.existingCustomerLogic.assignToSameUser": "bool",
+  "integrations.leadSources.NNacres.existingCustomerLogic.existingDataUpdateOption": "str",
+  "integrations.leadSources.website": "Array[dict]",
+  "integrations.leadSources.website.id": "str",
+  "integrations.leadSources.website.formName": "str",
+  "integrations.leadSources.website.processId": "ObjectId",
+  "integrations.leadSources.website.leadAllocLogic": "dict",
+  "integrations.leadSources.website.leadAllocLogic.logicType": "str",
+  "integrations.leadSources.website.leadAllocLogic.userIds": "Array[str]",
+  "integrations.leadSources.website.existCusLogic": "dict",
+  "integrations.leadSources.website.existCusLogic.asgnToSmUser": "bool",
+  "integrations.leadSources.website.existCusLogic.existDatUpdOpt": "str",
+  "integrations.leadSources.housing": "dict",
+  "integrations.leadSources.housing.processId": "ObjectId",
+  "integrations.leadSources.housing.leadAllocLogic": "dict",
+  "integrations.leadSources.housing.leadAllocLogic.logicType": "str",
+  "integrations.leadSources.housing.leadAllocLogic.userIds": "Array[str]",
+  "integrations.leadSources.housing.existCusLogic": "dict",
+  "integrations.leadSources.housing.existCusLogic.asgnToSmUser": "bool",
+  "integrations.leadSources.housing.existCusLogic.existDatUpdOpt": "str",
+  "integrations.leadSources.facebook": "Array",
+  "integrations.crmConfig": "dict",
+  "integrations.crmConfig.lsq": "dict",
+  "integrations.crmConfig.zohoCrm": "dict",
+  "integrations.crmConfig.zohoCrm.apiDomain": "str",
+  "integrations.crmConfig.zohoCrm.accountUrl": "str",
+  "integrations.crmConfig.freshSales": "dict",
+  "integrations.crmConfig.b2bBricks": "dict",
+  "integrations.crmConfig.salesforce": "dict",
+  "integrations.crmConfig.hubspot": "dict",
+  "integrations.triggers": "dict",
+  "integrations.triggers.email": "dict",
+  "integrations.triggers.email.create": "Array",
+  "integrations.triggers.interaction": "dict",
+  "integrations.triggers.interaction.create": "Array",
+  "integrations.triggers.call": "dict",
+  "integrations.triggers.call.create": "Array",
+  "integrations.triggers.call.update": "Array",
+  "integrations.s3": "dict",
+  "integrations.s3.bucketName": "str",
+  "integrations.s3.accessKey": "str",
+  "integrations.s3.secretAccessKey": "str",
+  "integrations.s3.region": "str",
+  "integrations.s3.createdAt": "int",
+  "integrations.compliance": "dict",
+  "integrations.compliance.dncr": "dict",
+  "integrations.compliance.dncr.cred": "dict",
+  "integrations.compliance.dncr.cred.clId": "str",
+  "integrations.compliance.dncr.cred.clSec": "str",
+  "integrations.compliance.dncr.cred.sysName": "str",
+  "integrations.compliance.dncr.prov": "str",
+  "iD": "bool",
+  "iFFF": "bool",
+  "autoDialer": "dict",
+  "autoDialer.mandatoryType": "str",
+  "autoDialer.userIds": "Array",
+  "autoDialer.delayBetweenCallsInSec": "int",
+  "callTrack": "dict",
+  "callTrack.trackTeamCalls": "bool",
+  "callTrack.ignoreUnknownCalls": "bool",
+  "notifications": "dict",
+  "notifications.recurring": "dict",
+  "notifications.recurring.emailIds": "Array",
+  "notifications.recurring.isNotifyUser": "bool",
+  "notifications.recurring.notifyBeforeInDays": "int",
+  "notifications.allocAsgn": "dict",
+  "notifications.allocAsgn.api": "bool",
+  "notifications.allocAsgn.web": "bool",
+  "notifications.allocAsgn.rechurn": "bool",
+  "notifications.allocAsgn.mobile": "bool",
+  "notifications.userStatus": "dict",
+  "notifications.userStatus.break": "dict",
+  "notifications.userStatus.break.isDisabled": "bool",
+  "notifications.userStatus.break.duration": "int",
+  "notifications.userStatus.break.unit": "str",
+  "notifications.userStatus.idle": "dict",
+  "notifications.userStatus.idle.isDisabled": "bool",
+  "notifications.userStatus.idle.duration": "int",
+  "notifications.userStatus.idle.unit": "str",
+  "notifications.userStatus.inactiveUser": "dict",
+  "notifications.userStatus.inactiveUser.isDisabled": "bool",
+  "notifications.userStatus.inactiveUser.duration": "int",
+  "notifications.userStatus.inactiveUser.unit": "str",
+  "notifications.userStatus.missedCheckIn": "dict",
+  "notifications.userStatus.missedCheckIn.isDisabled": "bool",
+  "notifications.userStatus.missedCheckIn.duration": "int",
+  "notifications.userStatus.missedCheckIn.unit": "str",
+  "dncrOptIn": "bool"
+}
+
+=============================================================
+Collection: api-key
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "apiKey": "str",
+  "expiresAt": "int",
+  "access": "str",
+  "creator": "dict",
+  "creator._id": "str",
+  "creator.name": "str",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: call-interaction
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "details": "dict",
+  "details.phoneNumber": "str",
+  "details.startTime": "int",
+  "details.endTime": "int",
+  "details.type": "str",
+  "details.duration": "int",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.process": "dict",
+  "user.process._id": "ObjectId",
+  "user.process.name": "str",
+  "user.process.type": "str",
+  "user.designation": "dict",
+  "user.designation._id": "str",
+  "user.designation.name": "str",
+  "customer": "dict",
+  "customer._id": "ObjectId",
+  "customer.name": "str",
+  "tag": "str",
+  "createdAt": "int",
+  "updatedAt": "int",
+  "isFollowedUp": "bool"
+}
+
+=============================================================
+Collection: customer-assign-log
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "cId": "ObjectId",
+  "pId": "ObjectId",
+  "cusId": "ObjectId",
+  "asgn": "dict",
+  "asgn.tId": "str",
+  "asgn.tN": "str",
+  "asgn.fId": "str",
+  "asgn.fN": "str",
+  "cAt": "int",
+  "uAt": "int"
+}
+
+=============================================================
+Collection: transaction
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "userId": "str",
+  "companyId": "ObjectId",
+  "status": "str",
+  "type": "str",
+  "validityInDays": "int",
+  "count": "int",
+  "value": "int",
+  "gst": "int",
+  "amountPaid": "int",
+  "discount": "int",
+  "currency": "str",
+  "licenseIds": "Array[ObjectId]",
+  "transactionDate": "int",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: roles
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "cId": "ObjectId",
+  "name": "str",
+  "permissions": "dict",
+  "permissions.webAllocation": "bool",
+  "permissions.processAdmin": "bool",
+  "permissions.maskCusPhone": "bool",
+  "permissions.customer": "dict",
+  "permissions.customer.delete": "bool",
+  "permissions.customer.edit": "bool",
+  "permissions.customer.view": "bool",
+  "permissions.login": "dict",
+  "permissions.login.userWeb": "bool",
+  "permissions.callRecording": "dict",
+  "permissions.callRecording.play": "bool",
+  "permissions.callRecording.download": "bool",
+  "permissions.callTracking": "dict",
+  "permissions.callTracking.personalCalls": "bool",
+  "permissions.callTracking.popup": "bool",
+  "permissions.callTracking.isTrackAllSim": "bool",
+  "permissions.callTracking.mandatory": "bool",
+  "permissions.callTracking.showMarkPersonalCall": "bool",
+  "permissions.reports": "dict",
+  "permissions.reports.downloadReports": "NoneType",
+  "permissions.reports.normal": "dict",
+  "permissions.reports.normal.crm": "dict",
+  "permissions.reports.normal.crm.access": "bool",
+  "permissions.reports.normal.allocation": "dict",
+  "permissions.reports.normal.allocation.access": "bool",
+  "permissions.reports.normal.customer": "dict",
+  "permissions.reports.normal.customer.access": "bool",
+  "permissions.reports.normal.login": "dict",
+  "permissions.reports.normal.login.access": "bool",
+  "permissions.reports.normal.call": "dict",
+  "permissions.reports.normal.call.access": "bool",
+  "permissions.reports.normal.whatsapp": "dict",
+  "permissions.reports.normal.whatsapp.access": "bool",
+  "permissions.reports.normal.email": "dict",
+  "permissions.reports.normal.email.access": "bool",
+  "permissions.reports.normal.sms": "dict",
+  "permissions.reports.normal.sms.access": "bool",
+  "permissions.reports.normal.followup": "dict",
+  "permissions.reports.normal.followup.access": "bool",
+  "permissions.reports.advanced": "dict",
+  "permissions.reports.advanced.disposition": "dict",
+  "permissions.reports.advanced.disposition.access": "bool",
+  "permissions.reports.advanced.login": "dict",
+  "permissions.reports.advanced.login.access": "bool",
+  "type": "int",
+  "cAt": "int",
+  "uAt": "int"
+}
+
+=============================================================
+Collection: crm-interaction
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "customer": "dict",
+  "customer._id": "ObjectId",
+  "customer.name": "str",
+  "customer.phoneNumber": "str",
+  "customer.email": "NoneType",
+  "customer.company": "dict",
+  "customer.company.name": "str",
+  "customer.company.address": "dict",
+  "customer.company.address.street": "str",
+  "customer.company.address.city": "NoneType",
+  "customer.company.address.state": "NoneType",
+  "customer.company.address.country": "str",
+  "customer.company.address.pincode": "NoneType",
+  "customer.company.kdm": "NoneType",
+  "dateTime": "int",
+  "priority": "int",
+  "notes": "NoneType",
+  "customFields": "Array[dict]",
+  "customFields._id": "str",
+  "customFields.dName": "str",
+  "customFields.type": "str",
+  "customFields.attributes": "dict",
+  "customFields.attributes.isFixed": "bool",
+  "customFields.attributes.isRequired": "bool",
+  "customFields.attributes.isKpi": "bool",
+  "customFields.value": "int",
+  "customFields.valueId": "NoneType",
+  "interactionStatus": "dict",
+  "interactionStatus.closedById": "str",
+  "interactionStatus.closedByName": "str",
+  "interactionStatus.closedOn": "int",
+  "assigned": "dict",
+  "assigned.fromId": "str",
+  "assigned.fromName": "str",
+  "assigned.toId": "str",
+  "assigned.toName": "str",
+  "assigned.processId": "ObjectId",
+  "createdAt": "int",
+  "updatedAt": "int",
+  "location": "dict",
+  "location.lat": "float",
+  "location.long": "float"
+}
+
+=============================================================
+Collection: sms-template
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "processId": "NoneType",
+  "companyId": "ObjectId",
+  "userId": "str",
+  "access": "str",
+  "label": "str",
+  "message": "str",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: allocation
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "customer": "dict",
+  "customer._id": "ObjectId",
+  "customer.name": "str",
+  "customer.phoneNumber": "str",
+  "customer.email": "str",
+  "customer.company": "dict",
+  "customer.company.name": "str",
+  "customer.company.address": "dict",
+  "customer.company.address.street": "str",
+  "customer.company.address.city": "str",
+  "customer.company.address.state": "str",
+  "customer.company.address.country": "str",
+  "customer.company.address.pincode": "str",
+  "customer.company.kdm": "dict",
+  "customer.company.kdm.name": "str",
+  "customer.company.kdm.phoneNumber": "str",
+  "priority": "int",
+  "assigned": "dict",
+  "assigned.toId": "str",
+  "assigned.toName": "str",
+  "assigned.fromId": "str",
+  "assigned.fromName": "str",
+  "assigned.processId": "ObjectId",
+  "customFields": "Array[dict]",
+  "customFields._id": "str",
+  "customFields.dName": "str",
+  "customFields.type": "str",
+  "customFields.attributes": "dict",
+  "customFields.attributes.isFixed": "bool",
+  "customFields.attributes.isFilterable": "bool",
+  "customFields.attributes.isReadOnly": "bool",
+  "customFields.value": "str",
+  "customFields.valueId": "str",
+  "notes": "str",
+  "source": "str",
+  "isInteractionPending": "bool",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: time-log
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.process": "dict",
+  "user.process._id": "ObjectId",
+  "user.device": "dict",
+  "user.device.modelName": "str",
+  "user.device.osVersion": "str",
+  "user.device.client": "str",
+  "status": "str",
+  "duration": "NoneType",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: user
+Schema (dot notation):
+{
+  "_id": "str",
+  "name": "str",
+  "phoneNumber": "str",
+  "email": "NoneType",
+  "iStat": "dict",
+  "iStat.id": "str",
+  "iStat.iBy": "str",
+  "iStat.iOn": "int",
+  "iStat.aOn": "int",
+  "designation": "dict",
+  "designation._id": "ObjectId",
+  "designation.name": "str",
+  "role": "dict",
+  "role._id": "NoneType",
+  "role.name": "str",
+  "role.ctmP": "dict",
+  "role.ctmP.webAllocation": "bool",
+  "role.ctmP.processAdmin": "bool",
+  "role.ctmP.maskCusPhone": "bool",
+  "role.ctmP.customer": "dict",
+  "role.ctmP.customer.delete": "bool",
+  "role.ctmP.customer.edit": "bool",
+  "role.ctmP.customer.view": "bool",
+  "role.ctmP.login": "dict",
+  "role.ctmP.login.userWeb": "bool",
+  "role.ctmP.callRecording": "dict",
+  "role.ctmP.callRecording.play": "bool",
+  "role.ctmP.callRecording.download": "bool",
+  "role.ctmP.callTracking": "dict",
+  "role.ctmP.callTracking.personalCalls": "bool",
+  "role.ctmP.callTracking.popup": "bool",
+  "role.ctmP.callTracking.isTrackAllSim": "bool",
+  "role.ctmP.callTracking.mandatory": "bool",
+  "role.ctmP.callTracking.showMarkPersonalCall": "bool",
+  "role.ctmP.reports": "dict",
+  "role.ctmP.reports.downloadReports": "bool",
+  "process": "Array[dict]",
+  "process._id": "ObjectId",
+  "process.name": "str",
+  "process.type": "str",
+  "company": "dict",
+  "company._id": "ObjectId",
+  "company.name": "str",
+  "reportsTo": "Array[dict]",
+  "reportsTo._id": "str",
+  "reportsTo.name": "str",
+  "license": "dict",
+  "license._id": "ObjectId",
+  "license.expiryDate": "int",
+  "createdAt": "int",
+  "updatedAt": "int",
+  "lastStatus": "dict",
+  "lastStatus.status": "str",
+  "lastStatus.since": "int",
+  "lastStatus.client": "str",
+  "tokens": "dict",
+  "tokens.otp": "dict",
+  "tokens.otp.otp": "int",
+  "tokens.otp.noa": "int",
+  "tokens.otp.genAt": "int",
+  "tut": "dict",
+  "tut.make_call": "int",
+  "tut.create_user": "int",
+  "tut.create_customer": "int",
+  "tut.add_crm_field": "int",
+  "tut.set_rec_path": "int",
+  "cT": "NoneType",
+  "deviceInfo": "dict",
+  "deviceInfo.modelName": "str",
+  "deviceInfo.osVersion": "str",
+  "deviceInfo.ram": "str",
+  "deviceInfo.refreshToken": "str",
+  "deviceInfo.loginAt": "int",
+  "deviceInfo.aV": "str",
+  "deviceInfo.fcm": "str"
+}
+
+=============================================================
+Collection: customer
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "name": "str",
+  "pNum": "str",
+  "cId": "ObjectId",
+  "creator": "dict",
+  "creator._id": "str",
+  "creator.name": "str",
+  "cAt": "int",
+  "uAt": "int"
+}
+
+=============================================================
+Collection: whatsapp-interaction
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "message": "str",
+  "status": "str",
+  "customer": "dict",
+  "customer._id": "ObjectId",
+  "customer.name": "str",
+  "customer.phoneNumber": "str",
+  "label": "str",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.processId": "ObjectId",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: process
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "name": "str",
+  "type": "str",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: report-agent-login
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.process": "dict",
+  "user.process._id": "ObjectId",
+  "user.process.name": "str",
+  "dateRange": "dict",
+  "dateRange.startEpoch": "int",
+  "dateRange.endEpoch": "int",
+  "calls": "dict",
+  "calls.incoming": "dict",
+  "calls.incoming.answered": "int",
+  "calls.incoming.missed": "int",
+  "calls.incoming.personal": "int",
+  "calls.incoming.total": "int",
+  "calls.incoming.talkTime": "int",
+  "calls.outgoing": "dict",
+  "calls.outgoing.contacted": "int",
+  "calls.outgoing.nonContacted": "int",
+  "calls.outgoing.personal": "int",
+  "calls.outgoing.total": "int",
+  "calls.outgoing.talkTime": "int",
+  "calls.total": "int",
+  "calls.totalTalkTime": "int",
+  "loginDuration": "int",
+  "idleTime": "int",
+  "wrapupTime": "int",
+  "breakTime": "int",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: sms-interaction
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "message": "str",
+  "status": "str",
+  "customer": "dict",
+  "customer._id": "ObjectId",
+  "customer.name": "str",
+  "customer.phoneNumber": "str",
+  "label": "str",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.processId": "ObjectId",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: email-template
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "processId": "NoneType",
+  "userId": "str",
+  "access": "str",
+  "label": "str",
+  "subject": "str",
+  "body": "str",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: whatsapp-template
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "processId": "NoneType",
+  "companyId": "ObjectId",
+  "userId": "str",
+  "access": "str",
+  "label": "str",
+  "message": "str",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: cloud-virtual-number
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "phoneNumber": "str",
+  "companyId": "ObjectId",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: customer-details
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "name": "str",
+  "pNum": "str",
+  "email": "NoneType",
+  "cusId": "ObjectId",
+  "cId": "ObjectId",
+  "pId": "ObjectId",
+  "cmp": "dict",
+  "cmp.name": "str",
+  "cmp.kdm": "NoneType",
+  "prt": "int",
+  "dT": "NoneType",
+  "cFs": "Array[dict]",
+  "cFs._id": "str",
+  "cFs.dName": "str",
+  "cFs.type": "str",
+  "cFs.attributes": "dict",
+  "cFs.attributes.isFixed": "bool",
+  "cFs.attributes.isRequired": "bool",
+  "cFs.attributes.isKpi": "bool",
+  "cFs.value": "str",
+  "cFs.valueId": "str",
+  "status": "dict",
+  "status.id": "str",
+  "status.v": "str",
+  "asgn": "dict",
+  "asgn.fromId": "str",
+  "asgn.fromName": "str",
+  "asgn.toId": "str",
+  "asgn.toName": "str",
+  "cAt": "int",
+  "uAt": "int",
+  "creator": "dict",
+  "creator._id": "str",
+  "creator.name": "str",
+  "rFol": "dict",
+  "rFol.userId": "str",
+  "rFol.processId": "ObjectId",
+  "rFol.startDate": "int",
+  "rFol.notes": "str",
+  "rFol.repeatsEvery": "dict",
+  "rFol.repeatsEvery.type": "NoneType",
+  "rFol.repeatsEvery.count": "int",
+  "rFol.followupAt": "int"
+}
+
+=============================================================
+Collection: report-agent-disposition
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.process": "dict",
+  "user.process._id": "ObjectId",
+  "user.process.name": "str",
+  "callType": "str",
+  "callCounts": "dict",
+  "callCounts.personal": "int",
+  "callCounts.contacted": "int",
+  "callCounts.nonContacted": "int",
+  "callCounts.total": "int",
+  "callCounts.recording": "int",
+  "customFields": "Array[dict]",
+  "customFields._id": "str",
+  "customFields.dName": "str",
+  "customFields.count": "int",
+  "dateRange": "dict",
+  "dateRange.startEpoch": "int",
+  "dateRange.endEpoch": "int",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: crm-field
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "processId": "ObjectId",
+  "nameMappings": "Array",
+  "defaultFieldAttributes": "Array",
+  "stgMap": "dict",
+  "stgMap.start": "Array[str]",
+  "stgMap.inProgress": "Array[str]",
+  "stgMap.closedWon": "Array",
+  "stgMap.closedLost": "Array[str]",
+  "crmFields": "Array[dict]",
+  "crmFields.dName": "str",
+  "crmFields.type": "str",
+  "crmFields.attributes": "dict",
+  "crmFields.attributes.isFixed": "bool",
+  "crmFields.attributes.isRequired": "bool",
+  "crmFields.attributes.isKpi": "bool",
+  "crmFields.attributes.isFilterable": "bool",
+  "crmFields.attributes.isReadOnly": "bool",
+  "crmFields.options": "Array[dict]",
+  "crmFields.options.dName": "str",
+  "crmFields.options.child": "NoneType",
+  "crmFields.options._id": "str",
+  "crmFields._id": "str",
+  "createdAt": "int",
+  "updatedAt": "int"
+}
+
+=============================================================
+Collection: rechurn-status
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.processId": "ObjectId",
+  "count": "dict",
+  "count.total": "int",
+  "count.done": "int",
+  "count.failed": "int",
+  "status": "int",
+  "isCommonPool": "bool",
+  "startEpoch": "int",
+  "endEpoch": "int",
+  "createdAt": "int",
+  "updatedAt": "int",
+  "allocatedTo": "Array[dict]",
+  "allocatedTo.id": "str",
+  "allocatedTo.name": "str"
+}
+
+=============================================================
+Collection: recurring-interaction
+Schema (dot notation):
+{
+  "_id": "ObjectId",
+  "companyId": "ObjectId",
+  "customer": "dict",
+  "customer._id": "ObjectId",
+  "customer.name": "str",
+  "customer.phoneNumber": "str",
+  "customer.company": "dict",
+  "customer.company.name": "str",
+  "customer.company.address": "dict",
+  "customer.company.address.street": "str",
+  "customer.company.address.city": "str",
+  "customer.company.address.state": "str",
+  "customer.company.address.country": "str",
+  "customer.company.address.pincode": "int",
+  "customer.company.kdm": "dict",
+  "customer.company.kdm.name": "str",
+  "customer.company.kdm.phoneNumber": "str",
+  "user": "dict",
+  "user._id": "str",
+  "user.name": "str",
+  "user.process": "dict",
+  "user.process._id": "ObjectId",
+  "type": "str",
+  "notes": "NoneType",
+  "followupAt": "int",
+  "createdAt": "int"
+}
+
+=============================================================
