@@ -217,8 +217,8 @@ class OptimizedNLToMongoDBQuerySystem:
             "user": "company._id",
             "time-log": "companyId", 
             "allocation": "companyId",
-            "customer": "companyId",
-            "customer-details": "companyId",
+            "customer": "cId",
+            "customer-details": "cId",
             "crm-interaction": "companyId",
             "email-interaction": "companyId",
             "sms-interaction": "companyId",
@@ -661,13 +661,15 @@ EXAMPLE RESPONSES:
         )
     
     def _generate_query_for_collection(self, query_text: str, collection_name: str, 
-                                     user_context: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate MongoDB query for collection"""
+                                 user_context: Dict[str, Any]) -> Dict[str, Any]:
         normalized_query = self.normalize_query(query_text)
         schema = self.full_schemas.get(collection_name)
         if not schema:
             return {"error": f"Collection {collection_name} not found"}
             
+        # Get the correct company field name for this collection
+        company_field = self.company_filtered_collections.get(collection_name, "companyId")
+        
         # Parse time expressions using hybrid approach
         time_context = self._parse_time_with_llm_fallback(query_text)
         
@@ -684,13 +686,13 @@ EXAMPLE RESPONSES:
             # Convert ObjectId to string for JSON compatibility in the prompt
             company_id_str = str(company_id)
             company_filter_note = f"""
-    CRITICAL REQUIREMENT - COMPANY FILTERING:
+    CRITICAL REQUIREMENT - COMPANY AND USER FILTERING:
     - This user can only access data from their company
-    - ALWAYS include companyId filter in your query: {{"companyId": "COMPANY_ID_PLACEHOLDER"}}
-    - For aggregation pipelines, add {{"$match": {{"companyId": "COMPANY_ID_PLACEHOLDER"}}}} as the first stage
-    - depending on the collection, you may need to use company._id or companyId
-    - For simple find queries, include "companyId": "COMPANY_ID_PLACEHOLDER" in the filter
-    - NOTE: The COMPANY_ID_PLACEHOLDER will be automatically converted to ObjectId during execution
+    - For this collection, use the field: {company_field}
+    - For user-specific queries, use: {{"field": "CURRENT_USER_ID_PLACEHOLDER"}}
+    - For aggregation pipelines, add {{"$match": {{{company_field}: "COMPANY_ID_PLACEHOLDER"}}}} as the first stage
+    - For simple find queries, include "{company_field}": "COMPANY_ID_PLACEHOLDER" in the filter
+    - NOTE: The placeholders will be automatically converted to actual IDs during execution
     """
         
         time_filter_note = ""
@@ -707,39 +709,40 @@ EXAMPLE RESPONSES:
     - Add time filter: {{"{primary_time_field}": {{"$gte": {time_context['start_unix']}, "$lte": {time_context['end_unix']}}}}}
     """
             
+        
         prompt = f"""
-    You are a MongoDB query expert. Generate a valid JSON response for this natural language query.
+You are a MongoDB query expert. Generate a valid JSON response for this natural language query.
 
-    USER QUERY: "{normalized_query}"
+USER QUERY: "{normalized_query}"
 
-    COLLECTION SCHEMA:
-    {schema}
+COLLECTION SCHEMA:
+{schema}
 
-    {company_filter_note}
+{company_filter_note}
 
-    {time_filter_note}
+{time_filter_note}
 
-    VALUE SYNONYMS TO CONSIDER (use canonical values in query):
-    {value_synonyms_str}
+VALUE SYNONYMS TO CONSIDER (use canonical values in query):
+{value_synonyms_str}
 
-    CRITICAL INSTRUCTIONS:
-    1. Respond with ONLY valid JSON in this exact format:
-    {{"collection": "{collection_name}", "query": <mongo_query>}}
+CRITICAL INSTRUCTIONS:
+1. Respond with ONLY valid JSON in this exact format:
+{{"collection": "{collection_name}", "query": <mongo_query>}}
 
-    2. The <mongo_query> must be valid MongoDB query syntax
-    3. For text matching, use case-insensitive regex: {{"$regex": "pattern", "$options": "i"}}
-    4. For counting, use aggregation pipeline: [{{"$match": {{"field": "value"}}}}, {{"$group": {{"_id": null, "count": {{"$sum": 1}}}}}}]
-    5. ALWAYS include companyId filter as a string (it will be converted to ObjectId later)
-    6. Use only standard JSON types (string, number, boolean, array, object)
-    7. NO MongoDB-specific types like ObjectId() in the JSON response
-    8. Use projection based on what fields the user needs, don't return everything
+2. The <mongo_query> must be valid MongoDB query syntax
+3. For text matching, use case-insensitive regex: {{"$regex": "pattern", "$options": "i"}}
+4. For counting, use aggregation pipeline: [{{"$match": {{{company_field}: "COMPANY_ID_PLACEHOLDER"}}}}, {{"$group": {{"_id": null, "count": {{"$sum": 1}}}}}}]
+5. ALWAYS include {company_field} filter as a string (it will be converted to ObjectId later)
+6. Use only standard JSON types (string, number, boolean, array, object)
+7. NO MongoDB-specific types like ObjectId() in the JSON response
+8. Use projection based on what fields the user needs, don't return everything
 
-    VALID EXAMPLE RESPONSES:
-    {{"collection": "call-interaction", "query": {{"details.type": "inbound", "companyId": "COMPANY_ID_PLACEHOLDER"}}}}
-    {{"collection": "user", "query": [{{"$match": {{"companyId": "COMPANY_ID_PLACEHOLDER"}}}}, {{"$group": {{"_id": null, "count": {{"$sum": 1}}}}}}]}}
+VALID EXAMPLE RESPONSES:
+{{"collection": "call-interaction", "query": {{"details.type": "inbound", "{company_field}": "COMPANY_ID_PLACEHOLDER"}}}}
+{{"collection": "user", "query": [{{"$match": {{{company_field}: "COMPANY_ID_PLACEHOLDER"}}}}, {{"$group": {{"_id": null, "count": {{"$sum": 1}}}}}}]}}
 
-    Respond with ONLY the JSON object, no additional text or formatting:
-    """
+Respond with ONLY the JSON object, no additional text or formatting:
+"""
         
         try:
             response = self.model.generate_content(prompt)
@@ -772,8 +775,11 @@ EXAMPLE RESPONSES:
             # Convert companyId string to ObjectId for actual query execution
             if company_id:
                 # Replace any COMPANY_ID_PLACEHOLDER with the actual company_id
-                parsed_result["query"] = self._replace_company_id_placeholder(parsed_result["query"], company_id)
-            
+                parsed_result["query"] = self._replace_company_id_placeholder(
+                parsed_result["query"], 
+                company_id,
+                user_context.get('user_id')  # Pass the user_id from context
+                )
             return parsed_result
             
         except json.JSONDecodeError as e:
@@ -786,26 +792,29 @@ EXAMPLE RESPONSES:
         except Exception as e:
             return {"error": f"Failed to generate query: {str(e)}", "raw_response": response.text}
 
-    def _replace_company_id_placeholder(self, query, company_id):
+    def _replace_company_id_placeholder(self, query, company_id, user_id=None):
         if isinstance(query, dict):
             new_query = {}
             for key, value in query.items():
-                if key == "companyId" and value == "COMPANY_ID_PLACEHOLDER":
+                # Handle both the specific company field and generic placeholder
+                if value == "COMPANY_ID_PLACEHOLDER":
                     new_query[key] = company_id
+                elif value == "CURRENT_USER_ID_PLACEHOLDER":
+                    new_query[key] = user_id
                 elif isinstance(value, dict):
-                    new_query[key] = self._replace_company_id_placeholder(value, company_id)
+                    new_query[key] = self._replace_company_id_placeholder(value, company_id, user_id)
                 elif isinstance(value, list):
-                    new_query[key] = [self._replace_company_id_placeholder(item, company_id) if isinstance(item, dict) else item for item in value]
+                    new_query[key] = [self._replace_company_id_placeholder(item, company_id, user_id) if isinstance(item, dict) else item for item in value]
                 else:
                     new_query[key] = value
             return new_query
         elif isinstance(query, list):
-            return [self._replace_company_id_placeholder(item, company_id) if isinstance(item, dict) else item for item in query]
+            return [self._replace_company_id_placeholder(item, company_id, user_id) if isinstance(item, dict) else item for item in query]
         else:
             return query
-            
+                
     def _convert_to_case_insensitive(self, query):
-        """Convert query to case-insensitive version"""
+   
         if not isinstance(query, dict):
             return query
             
@@ -819,8 +828,12 @@ EXAMPLE RESPONSES:
                     # Handle nested queries
                     new_query[key] = self._convert_to_case_insensitive(value)
                 elif isinstance(value, str) and key != "companyId":
-                    # Convert to case-insensitive regex match (but not for companyId)
-                    new_query[key] = {"$regex": f"^{value}$", "$options": "i"}
+                    # Skip regex for UUID fields (like user IDs) and other special fields
+                    if key.lower().endswith('id') or key.lower().endswith('_id'):
+                        new_query[key] = value  # Keep exact match for ID fields
+                    else:
+                        # Convert to case-insensitive regex match for non-ID fields
+                        new_query[key] = {"$regex": f"^{value}$", "$options": "i"}
                 else:
                     new_query[key] = value
         return new_query
@@ -1023,14 +1036,14 @@ def main():
     user_id = "14f57657-7362-46c5-af7a-e96d56193786"
     
     # First query - will cache user context
-    result1 = system.process_query("Show me my company details", user_id)
+    result1 = system.process_query("what is the name of my process?", user_id)
     print(f"First query processing time: {result1.get('processing_time', 0):.3f}s")
     print("Results:", json.dumps(result1, indent=2))
     
     # Second query - will use cached context (faster!)
-    result2 = system.process_query("Get all my processes", user_id)
-    print(f"Second query processing time: {result2.get('processing_time', 0):.3f}s")
-    print("Results:", json.dumps(result2, indent=2))
+    # result2 = system.process_query("Get all my processes", user_id)
+    # print(f"Second query processing time: {result2.get('processing_time', 0):.3f}s")
+    # print("Results:", json.dumps(result2, indent=2))
     
     # Invalidate cache when user data changes
     # system.invalidate_user_cache(user_id)
