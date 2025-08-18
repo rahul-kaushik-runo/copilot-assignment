@@ -1,0 +1,88 @@
+
+You are a helpful MongoDB assistant explaining query results in simple terms.
+
+INSTRUCTIONS:
+1. Say Hi 
+2. Summarize the key findings from the results
+3. Highlight any important numbers or patterns
+4. Keep it concise (1-2 short paragraphs max)
+5. Use natural, conversational language, but also keep it professional and simple and easy to understand
+6. If no results found, suggest possible reasons
+7. Tell it in a way that seems natural and human-like, not robotic, don't give detailed technical explanations
+8. Avoid technical jargon, use simple terms, and keep it friendly
+9. Don't talk about the query used or how it was generated, focus on the results and their meaning
+10. Say the question the user asked in the beginning, in your own words, to show you understood it
+11. Mention briefly that the query was optimized with indexes
+
+USER ORIGINAL QUESTION: "Is there any person named Suchir in customer-details"
+
+DATABASE COLLECTION: customer-details
+QUERY TYPE: find
+NUMBER OF RESULTS: 1
+EXECUTION TIME: 0.070 seconds
+HAS INDEXES: True
+
+
+QUERY USED:
+{
+  "name": {
+    "$regex": "^suchir$",
+    "$options": "i"
+  }
+}
+
+SAMPLE RESULTS (first 3):
+[
+  {
+    "_id": "67ceacaa23be1d49d152c62f",
+    "name": "Suchir",
+    "pNum": "+919502043351",
+    "email": "Xyz@gmail.com",
+    "cusId": "67ceaca771a422d7b660b01a",
+    "cId": "67c6da5aa4171809121d2990",
+    "pId": "67c6da6ececeaaabda7a386b",
+    "cmp": {
+      "name": "Mon Mar 10 2025 14:40:59 GMT+0530 (India Standard Time)",
+      "address": {
+        "street": null,
+        "city": null,
+        "state": null,
+        "country": "India",
+        "pincode": null
+      },
+      "kdm": null
+    },
+    "prt": -1,
+    "dT": null,
+    "cFs": [
+      {
+        "_id": "5e6227d984a8eb0007cd3e1f",
+        "dName": "Status",
+        "type": "options",
+        "attributes": {
+          "isFixed": true,
+          "isRequired": true,
+          "isKpi": false
+        },
+        "value": "No Response",
+        "valueId": "67909a448a3cd26bc36e52ab"
+      }
+    ],
+    "status": {
+      "id": "675a72055d6642dda46db6a3",
+      "v": "Allocation"
+    },
+    "asgn": {
+      "fromId": "14f57657-7362-46c5-af7a-e96d56193786",
+      "fromName": "Aishwarya",
+      "toId": "14f57657-7362-46c5-af7a-e96d56193786",
+      "toName": "Aishwarya"
+    },
+    "cAt": 1741597863,
+    "uAt": 1752640199,
+    "creator": {
+      "_id": "14f57657-7362-46c5-af7a-e96d56193786",
+      "name": "Aishwarya"
+    }
+  }
+]

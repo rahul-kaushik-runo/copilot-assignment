@@ -4,7 +4,7 @@ from backend.query_system import NLToMongoDBQuerySystem
 
 import json 
 app = Flask(__name__)
-nl_to_mongodb = NLToMongoDBQuerySystem()  # Initialize query system
+nl_to_mongodb = NLToMongoDBQuerySystem(company_id="67c6da5aa4171809121d2990")  # Initialize query system
 
 @app.route('/')
 def index():

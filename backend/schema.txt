@@ -429,7 +429,7 @@ updatedAt: Unix timestamp of the last update.
 
 
 Collection: time-log
-This collection records user login/logout and activity durations.
+This collection records user login/logout and activity durations it also checks if the users are active or inactive, use this only when asked about active or inactive users. 
 
 _id: Unique identifier (ObjectId) for the log entry.
 companyId: The company (ObjectId) associated with the log.
@@ -455,7 +455,7 @@ _id: Unique user ID (str).
 name: User’s full name.
 phoneNumber: User’s contact number.
 email: User’s email (often null).
-iStat: Invitation/activation status.
+iStat: Invitation/activation status. (This is not active or inactive status, its about invitation)
 
 id: Status ID (str).
 
