@@ -545,18 +545,22 @@ RESPOND WITH ONLY THE JSON OBJECT OR null:
         return query
     
     def _add_company_filter_to_query(self, query: Any, company_field: str, company_id: ObjectId) -> Any:
-        """Add company filter to MongoDB query"""
+    
         if isinstance(query, dict):
             query = query.copy()
             
-            if '.' in company_field:
-                parts = company_field.split('.')
-                nested_filter = company_id
-                for part in reversed(parts):
-                    nested_filter = {part: nested_filter}
-                query.update(nested_filter)
+            # Special handling for company collection
+            if company_field == "_id":
+                query["_id"] = company_id
             else:
-                query[company_field] = company_id
+                # Handle dot notation for nested fields
+                parts = company_field.split('.')
+                current = query
+                for part in parts[:-1]:
+                    if part not in current:
+                        current[part] = {}
+                    current = current[part]
+                current[parts[-1]] = company_id
                 
         elif isinstance(query, list):
             query = query.copy()
@@ -564,26 +568,33 @@ RESPOND WITH ONLY THE JSON OBJECT OR null:
             match_stage_found = False
             for stage in query:
                 if '$match' in stage:
-                    if '.' in company_field:
-                        parts = company_field.split('.')
-                        nested_filter = company_id
-                        for part in reversed(parts):
-                            nested_filter = {part: nested_filter}
-                        stage['$match'].update(nested_filter)
-                    else:
-                        stage['$match'][company_field] = company_id
                     match_stage_found = True
+                    if company_field == "_id":
+                        stage['$match']["_id"] = company_id
+                    else:
+                        # Handle dot notation for nested fields
+                        parts = company_field.split('.')
+                        current = stage['$match']
+                        for part in parts[:-1]:
+                            if part not in current:
+                                current[part] = {}
+                            current = current[part]
+                        current[parts[-1]] = company_id
                     break
             
             if not match_stage_found:
-                if '.' in company_field:
-                    parts = company_field.split('.')
-                    nested_filter = company_id
-                    for part in reversed(parts):
-                        nested_filter = {part: nested_filter}
-                    query.insert(0, {"$match": nested_filter})
+                if company_field == "_id":
+                    query.insert(0, {"$match": {"_id": company_id}})
                 else:
-                    query.insert(0, {"$match": {company_field: company_id}})
+                    # Handle dot notation for nested fields
+                    parts = company_field.split('.')
+                    filter_obj = {}
+                    current = filter_obj
+                    for part in parts[:-1]:
+                        current[part] = {}
+                        current = current[part]
+                    current[parts[-1]] = company_id
+                    query.insert(0, {"$match": filter_obj})
         
         return query
     
